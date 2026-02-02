@@ -1,0 +1,218 @@
+@charset "UTF-8";
+
+:root {
+    --small-space: 8px;
+    --medium-space: 16px;
+    --large-space: 24px;
+    --x-large-space: 32px;
+    --xx-large-space: 40px;
+    --basic-color: #dbdee0;
+    --main-color: #646570;
+    --sub-color: #aaaaaa;
+    --accent-color: #ffa32b;
+    --black-color: #373737;
+    --white-color: #ffffff;
+    --header-size: 150px;
+    --footer-size: 35px;
+    --main-font: ;
+    --sub-font: ;
+    --basic-font: ;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: var(--basic-font);
+    font-size: 1.6rem;
+    background-color: var(--basic-color);
+    color: var(--black-color);
+}
+
+/* body:has(#wpadminbar) {
+    padding-top: 32px;
+}
+
+@media screen and (max-width: 780px) {
+    body:has(#wpadminbar) {
+        padding-top: 46px;
+    }
+
+    ======================max-width:780px======================
+} */
+
+a {
+    text-decoration: none;
+}
+
+img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+article.top,
+main.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100dvh - var(--footer-size));
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-size);
+    display: flex;
+    justify-content: space-between;
+    padding: var(--x-large-space);
+    z-index: 9999;
+
+    nav {
+        flex: 1 1 50%;
+    }
+}
+
+#wpadminbar~.header {
+    top: 32px;
+
+    @media screen and (max-width: 780px) {
+        top: 46px;
+
+        /*======================max-width:780px======================*/
+    }
+
+}
+
+
+.logo {
+    font-size: 3.2rem;
+    font-weight: bold;
+    flex: 1 1 50%;
+
+    a {
+        color: var(--black-color);
+    }
+}
+
+.nav__menu {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: var(--large-space);
+    list-style: none;
+    align-items: end;
+    justify-content: space-around;
+}
+
+.nav__menu--list {
+    a {
+        color: var(--black-color);
+    }
+}
+
+.footer {
+    position: relative;
+    width: 100%;
+    height: var(--footer-size);
+    padding: var(--x-large-space);
+}
+
+.footer__mailto {
+    font-weight: normal;
+    font-size: 1.8rem;
+    text-align: center;
+
+    a {
+        text-decoration: none;
+        color: var(--black-color);
+    }
+}
+
+.copy_right {
+    display: block;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        padding-top: var(--medium-space);
+    }
+
+    .header {
+        display: contents;
+    }
+
+    .logo {
+        width: max-content;
+        margin-inline: auto;
+        font-size: clamp(2.4rem, 6.4vw, 3.2rem);
+    }
+
+    .header nav {
+        width: clamp(50px, 13.3vw, 65px);
+        height: auto;
+        aspect-ratio: 1/1;
+        border: 3px solid var(--black-color);
+        position: fixed;
+        top: var(--x-large-space);
+        right: var(--x-large-space);
+        z-index: 999999;
+    }
+
+    #wpadminbar~.header nav {
+        top: calc(var(--x-large-space) + 46px);
+    }
+
+    .header nav::before,
+    .header nav::after {
+        content: '';
+        position: absolute;
+        border: 2px solid var(--black-color);
+        width: 50%;
+        top: 30%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .header nav::after {
+        top: initial;
+        bottom: 30%;
+    }
+
+    .nav__menu {
+        flex-direction: column;
+        justify-content: center;
+        gap: var(--xx-large-space);
+        visibility: hidden;
+        position: fixed;
+        inset: 0;
+        opacity: 0;
+        padding: var(--large-space);
+        transition: opacity .3s;
+        z-index: 99999;
+        background-color: var(--white-color);
+    }
+
+    .nav__menu--list {
+        width: 100%;
+        text-align: right;
+        font-size: 4rem;
+
+        a {
+            display: block;
+        }
+    }
+
+    /*======================max-width:768px======================*/
+}
