@@ -75,6 +75,13 @@ main.page {
     text-align: center;
 }
 
+.caution {
+    font-weight: bold;
+    font-size: 4.2rem;
+    line-height: 6rem;
+    text-align: center;
+}
+
 .no-image {
     position: relative;
     width: 100%;
