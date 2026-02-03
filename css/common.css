@@ -36,18 +36,6 @@ body {
     color: var(--black-color);
 }
 
-/* body:has(#wpadminbar) {
-    padding-top: 32px;
-}
-
-@media screen and (max-width: 780px) {
-    body:has(#wpadminbar) {
-        padding-top: 46px;
-    }
-
-    ======================max-width:780px======================
-} */
-
 a {
     text-decoration: none;
 }
@@ -56,15 +44,54 @@ img {
     display: block;
     width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
 article.top,
-main.page {
+main.page,
+main.single {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     min-height: calc(100dvh - var(--footer-size));
+}
+
+main.page {
+    padding-top: var(--header-size);
+    padding-inline: var(--x-large-space);
+    padding-bottom: var(--footer-size);
+}
+
+.inner {
+    width: 80%;
+    height: 100%;
+    margin-inline: auto;
+}
+
+.title {
+    font-size: 2.4rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.no-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--black-color);
+}
+
+.no-image::before {
+    content: 'No Image';
+    width: max-content;
+    height: max-content;
+    color: var(--white-color);
+    font-size: 3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .header {
@@ -145,21 +172,20 @@ main.page {
 }
 
 @media screen and (max-width: 768px) {
-    body {
-        padding-top: var(--medium-space);
-    }
-
     .header {
         display: contents;
     }
 
     .logo {
-        width: max-content;
-        margin-inline: auto;
+        position: fixed;
+        top: var(--x-large-space);
+        left: 50%;
+        transform: translateX(-50%);
         font-size: clamp(2.4rem, 6.4vw, 3.2rem);
+        z-index: 99999;
     }
 
-    .header nav {
+    .nav__hum_icon {
         width: clamp(50px, 13.3vw, 65px);
         height: auto;
         aspect-ratio: 1/1;
@@ -167,15 +193,17 @@ main.page {
         position: fixed;
         top: var(--x-large-space);
         right: var(--x-large-space);
-        z-index: 999999;
+        cursor: pointer;
+        z-index: 99999;
     }
 
-    #wpadminbar~.header nav {
+    body:has(#wpadminbar) .nav__hum_icon,
+    body:has(#wpadminbar) .logo {
         top: calc(var(--x-large-space) + 46px);
     }
 
-    .header nav::before,
-    .header nav::after {
+    .nav__hum_icon::before,
+    .nav__hum_icon::after {
         content: '';
         position: absolute;
         border: 2px solid var(--black-color);
@@ -183,11 +211,24 @@ main.page {
         top: 30%;
         left: 50%;
         transform: translateX(-50%);
+        transition: .3s;
     }
 
-    .header nav::after {
+    .nav__hum_icon::after {
         top: initial;
         bottom: 30%;
+    }
+
+    .nav__hum_icon.on::before {
+        width: 60%;
+        top: 50%;
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .nav__hum_icon.on::after {
+        width: 60%;
+        bottom: 50%;
+        transform: translate(-50%, 50%) rotate(-45deg);
     }
 
     .nav__menu {
@@ -199,9 +240,14 @@ main.page {
         inset: 0;
         opacity: 0;
         padding: var(--large-space);
-        transition: opacity .3s;
         z-index: 99999;
         background-color: var(--white-color);
+        transition: opacity .3s;
+    }
+
+    .nav__menu.on {
+        visibility: visible;
+        opacity: 1;
     }
 
     .nav__menu--list {

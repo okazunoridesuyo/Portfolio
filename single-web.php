@@ -1,7 +1,9 @@
 <?php get_header(); ?>
 
-<main id="profile" class="page">
+<main class="single">
     <div class="inner">
+        <h1 class="title"><?php the_title(); ?></h1>
+
         <?php the_content(); ?>
     </div>
 </main>

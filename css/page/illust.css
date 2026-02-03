@@ -1,0 +1,58 @@
+#illust.page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.illust__category_section {
+    width: 100%;
+    margin-bottom: var(--xx-large-space);
+}
+
+.illust__category_name {
+    margin-block: var(--large-space);
+    font-size: 2rem;
+    text-align: center;
+
+    a {
+        color: var(--black-color);
+    }
+}
+
+.illust__wrap_container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, clamp(200px, 80vw, 300px));
+    gap: var(--large-space);
+    justify-content: center;
+}
+
+.illust__wrap_container:not(:last-of-type) {
+    margin-bottom: var(--xx-large-space);
+}
+
+.illust__item_container {
+    position: relative;
+    width: 100%;
+    height: max-content;
+
+    a {
+        position: absolute;
+        inset: 0;
+    }
+}
+
+.illust__item_container--img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4/3;
+    background-color: var(--black-color);
+
+    img {
+        object-fit: contain;
+    }
+}
+
+.illust__item_container--title {
+    font-size: 1.8rem;
+    text-align: center;
+}

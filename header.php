@@ -20,5 +20,6 @@
                 <li class="nav__menu--list"><a href="<?php echo home_url('web'); ?>">Web</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('illust'); ?>">Illust</a></li>
             </ul>
+            <div class="nav__hum_icon"></div>
         </nav>
     </header>

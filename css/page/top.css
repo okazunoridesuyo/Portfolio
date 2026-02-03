@@ -8,8 +8,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
+    width: clamp(150px, 26.6vw, 400px);
+    aspect-ratio: 1/1;
 }
 
 .main_image__element01 {
@@ -22,8 +22,8 @@
 .main_image__element02 {
     background-color: aqua;
     z-index: 1;
-    width: 300px;
-    height: 300px;
+    width: clamp(225px, 40vw, 600px);
+    aspect-ratio: 1/1;
     animation: anim 12s linear infinite;
 }
 
