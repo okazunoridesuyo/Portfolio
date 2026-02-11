@@ -2,6 +2,7 @@
     text-align: center;
     font-size: 1.4rem;
     font-weight: normal;
+    margin-block: var(--medium-space);
 
     span {
         font-weight: bold;

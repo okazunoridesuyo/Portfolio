@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="<?php echo get_template_directory_uri() . '/../../uploads/2026/02/rect246.svg'; ?>">
     <title>okazunori's PORTFOLIO</title>
     <?php wp_head(); ?>
 </head>
@@ -19,6 +20,10 @@
                 <li class="nav__menu--list"><a href="<?php echo home_url('profile'); ?>">Profile</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('web'); ?>">Web</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('illust'); ?>">Illust</a></li>
+                <li class="nav__menu--list"><a href="<?php echo home_url('blog'); ?>">Blog</a></li>
+                <li class="nav__menu--list"><a href="<?php echo home_url('game'); ?>">Game</a></li>
+                <li class="nav__menu--list"><a href="<?php echo home_url('music'); ?>">Music</a></li>
+                <li class="nav__menu--list"><a href="<?php echo home_url('text'); ?>">Text</a></li>
             </ul>
             <div class="nav__hum_icon"></div>
         </nav>

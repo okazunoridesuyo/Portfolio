@@ -13,10 +13,14 @@
     --black-color: #373737;
     --white-color: #ffffff;
     --header-size: 150px;
-    --footer-size: 35px;
-    --main-font: ;
-    --sub-font: ;
-    --basic-font: ;
+    --footer-size: 75px;
+    --main-font: "Lexend Tera";
+    --sub-font: "Vend Sans";
+    --basic-font: "M PLUS 1 Code";
+    --optional-font01: "Funnel Sans";
+    --optional-font02: "Gabarito";
+    --optional-font03: "Kumbh Sans";
+    --optional-font04: "Murecho";
 }
 
 * {
@@ -30,7 +34,7 @@ html {
 }
 
 body {
-    font-family: var(--basic-font);
+    font-family: var(--sub-font), var(--basic-font), sans-serif, monospace;
     font-size: 1.6rem;
     background-color: var(--basic-color);
     color: var(--black-color);
@@ -38,6 +42,14 @@ body {
 
 a {
     text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+body .the_content li {
+    list-style: initial;
 }
 
 img {
@@ -55,9 +67,6 @@ main.single {
     flex-direction: column;
     justify-content: center;
     min-height: calc(100dvh - var(--footer-size));
-}
-
-main.page {
     padding-top: var(--header-size);
     padding-inline: var(--x-large-space);
     padding-bottom: var(--footer-size);
@@ -69,10 +78,23 @@ main.page {
     margin-inline: auto;
 }
 
+.the_content {
+    line-height: 3.2rem;
+
+    ul {
+        margin-left: var(--large-space);
+    }
+
+    details {
+        margin-bottom: var(--small-space);
+    }
+}
+
 .title {
     font-size: 2.4rem;
     font-weight: bold;
     text-align: center;
+    margin-block: var(--medium-space);
 }
 
 .caution {
@@ -131,7 +153,9 @@ main.page {
 
 .logo {
     font-size: 3.2rem;
-    font-weight: bold;
+    font-family: var(--main-font), sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.55rem;
     flex: 1 1 50%;
 
     a {
@@ -159,10 +183,11 @@ main.page {
     position: relative;
     width: 100%;
     height: var(--footer-size);
-    padding: var(--x-large-space);
+    padding: var(--medium-space);
 }
 
 .footer__mailto {
+    font-family: var(--optional-font03), sans-serif;
     font-weight: normal;
     font-size: 1.8rem;
     text-align: center;
@@ -170,6 +195,10 @@ main.page {
     a {
         text-decoration: none;
         color: var(--black-color);
+    }
+
+    span {
+        vertical-align: bottom;
     }
 }
 
@@ -268,4 +297,36 @@ main.page {
     }
 
     /*======================max-width:768px======================*/
+}
+
+.pagination_container {
+    width: 100%;
+    padding: var(--large-space);
+    background-color: var(--basic-color);
+
+    .page-numbers {
+        font-size: 1.8rem;
+        color: var(--black-color);
+        padding-inline: .8rem;
+        border: 1px solid var(--black-color);
+        margin-right: 1rem;
+
+        &.current {
+            color: var(--white-color);
+            background-color: var(--black-color);
+        }
+
+        &.prev {
+            margin-right: 3rem;
+        }
+
+        &.next {
+            margin-left: 3rem;
+        }
+    }
+}
+
+.pagination_container__item_wrap {
+    margin-inline: auto;
+    width: max-content;
 }

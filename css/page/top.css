@@ -8,23 +8,24 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: clamp(150px, 26.6vw, 400px);
+    /* width: clamp(150px, 26.6vw, 400px); */
+    width: clamp(225px, 40vw, 600px);
+    height: auto;
     aspect-ratio: 1/1;
 }
 
 .main_image__element01 {
-    background-color: red;
-    opacity: .5;
+    /* background-color: red; */
     z-index: 4;
     animation: anim 10s linear infinite;
+    width: calc(clamp(225px, 40vw, 600px) - var(--x-large-space));
 }
 
 .main_image__element02 {
-    background-color: aqua;
+    /* background-color: aqua; */
     z-index: 1;
-    width: clamp(225px, 40vw, 600px);
     aspect-ratio: 1/1;
-    animation: anim 12s linear infinite;
+    animation: anim 30s linear infinite;
 }
 
 @keyframes anim {

@@ -2,7 +2,9 @@
 
 <main id="profile" class="page">
     <div class="inner">
-        <?php the_content(); ?>
+        <div class="the_content">
+            <?php the_content(); ?>
+        </div>
     </div>
 </main>
 

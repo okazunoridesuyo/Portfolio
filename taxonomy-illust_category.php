@@ -2,7 +2,7 @@
 
 <main id="illust" class="page">
 
-    <h1 class="illust__category_name"><?php echo get_queried_object()->name; ?></h1>
+    <h1 class="illust__category_name"><?php echo strtoupper(str_replace('_', ' ', get_queried_object()->slug)); ?></h1>
 
     <div class="illust__wrap_container">
         <?php if (have_posts()): ?>
