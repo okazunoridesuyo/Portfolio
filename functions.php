@@ -50,6 +50,9 @@ function my_enqueue_script()
     if (is_page('blog') || is_date() || is_category()) {
         wp_enqueue_style('portfolio-blog', get_template_directory_uri() . '/css/page/blog.css', [], filemtime(get_theme_file_path('/css/page/blog.css')));
     }
+    if (is_search()) {
+        wp_enqueue_style('portfolio-search', get_template_directory_uri() . '/css/page/search.css', [], filemtime(get_theme_file_path('/css/page/search.css')));
+    }
 };
 
 add_action('init', function () {

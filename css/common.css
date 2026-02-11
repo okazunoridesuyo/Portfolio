@@ -97,7 +97,8 @@ main.single {
     margin-block: var(--medium-space);
 }
 
-.caution {
+.caution,
+.search__alert {
     font-weight: bold;
     font-size: 4.2rem;
     line-height: 6rem;
@@ -127,7 +128,7 @@ main.single {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     height: var(--header-size);
     display: flex;
     justify-content: space-between;

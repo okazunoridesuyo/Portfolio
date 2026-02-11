@@ -4,11 +4,11 @@
 //         'thumbnail' => string $class_name_thumbnail='', <-'出力させる項目'=> クラス名
 //         'time' => string $class_name_time='',
 //         'title' => string $class_name_title='',
-//         'category'=>[string $taxonomy_slug , string $class_name_taxonomy=''],
+//         'category'=>[string $taxonomy_slug , string $class_name_taxonomy=''], <-[タクソノミー名（スラッグ）, クラス名]
 //         'content' => string $class_name_content='',
-//          'no-image'=> boolean, <-サムネイルが無かったときにNo-Imageを表示させるか否か
 //     ],
 //     'section'=>string $section_name='', <-どのセクションかを文字列で指定（決められたクラス名の先頭に付く文字列）
+//     'no-image'=> boolean, <-サムネイルが無かったときにNo-Imageを表示させるか否か
 // ];
 $args_def = [
     'order' => [
