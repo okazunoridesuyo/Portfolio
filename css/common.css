@@ -88,6 +88,10 @@ main.single {
     details {
         margin-bottom: var(--small-space);
     }
+
+    img {
+        background-color: var(--black-color);
+    }
 }
 
 .title {

@@ -40,7 +40,8 @@ $replace_args = array_replace($format_args, array_intersect_key($format_args, $a
 $order_list = wp_parse_args($replace_args, $args);
 ?>
 
-<?php $class_name_def = $order_list['section'] === '' ? 'item_container' : $order_list['section'] . '__item_container'; ?>
+<?php $class_name_def = $order_list['section'] === '' || is_null($order_list['section'])
+    ? 'item_container' : $order_list['section'] . '__item_container'; ?>
 
 <div class="<?php echo $class_name_def; ?>">
     <?php $counter = 0; ?>
@@ -54,13 +55,7 @@ $order_list = wp_parse_args($replace_args, $args);
         ?>
 
         <?php if ($key === 'thumbnail'): ?>
-            <?php if (has_post_thumbnail()): ?>
-                <div class="<?php echo $class_name; ?>">
-                    <?php the_post_thumbnail(); ?>
-                </div>
-            <?php elseif ($order_list['no-image']): ?>
-                <div class="<?php echo $class_name; ?> no-image"></div>
-            <?php endif; ?>
+            <?php get_template_part('template-parts/loop', 'get_thumbnail', [$class_name, $order_list['no-image']]); ?>
         <?php endif; ?>
 
         <?php if ($key === 'time'): ?>

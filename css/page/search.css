@@ -78,3 +78,8 @@
     margin-right: .5rem;
     font-size: 1.2rem;
 }
+
+.search__item_container--link {
+    position: absolute;
+    inset: 0;
+}
