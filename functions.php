@@ -61,6 +61,7 @@ function my_enqueue_script()
     }
     if (is_singular('text')) {
         wp_enqueue_style('portfolio-single-text', get_template_directory_uri() . '/css/page/single-text.css', [], filemtime(get_theme_file_path('/css/page/single-text.css')));
+        wp_enqueue_script('portfolio-single-text', get_template_directory_uri() . '/js/single-text.js', [], filemtime(get_theme_file_path('/js/single-text.js')), true);
     } elseif (is_single()) {
         wp_enqueue_style('portfolio-single', get_template_directory_uri() . '/css/page/single.css', [], filemtime(get_theme_file_path('/css/page/single.css')));
     }

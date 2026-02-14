@@ -4,39 +4,48 @@
 
     padding-inline: 0;
 
+    .title {
+        margin-bottom: calc(var(--xx-large-space) * 1.5);
+    }
+
     .inner {
+        display: flex;
+        justify-content: center;
         width: 100%;
+
+        position: relative;
 
         padding-inline: 10%;
 
-        display: grid;
-        --gap-size: var(--medium-space);
-        gap: var(--gap-size);
-        grid-template-columns: calc(clamp(300px, 60vw, 1000px) - var(--gap-size)) clamp(200px, 20vw, 500px);
-        grid-template-areas:
-            'main outline';
         overflow-y: auto;
-
-        position: relative;
     }
 }
 
 .text__main_content_section {
-    grid-area: main;
+    max-width: 1200px;
+    height: max-content;
+    flex: 1 1 70%;
 
     background-color: var(--white-color);
 
     padding: var(--medium-space);
     margin-top: var(--small-space);
+    margin-right: var(--medium-space);
 }
 
 .text__sub_content_section {
-    grid-area: outline;
+    max-width: 500px;
+    flex: 1 1 30%;
+    justify-content: center;
 
     position: sticky;
     top: var(--small-space);
 
     height: max-content;
+
+    &:empty {
+        display: none;
+    }
 }
 
 .text__outline {

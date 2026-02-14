@@ -1,7 +1,7 @@
 .grid__wrap_container {
     display: grid;
     grid-auto-rows: max-content;
-    grid-template-columns: repeat(auto-fit, clamp(200px, 30vw, 300px));
+    grid-template-columns: repeat(auto-fit, clamp(200px, 80vw, 300px));
     justify-content: center;
 
     position: relative;

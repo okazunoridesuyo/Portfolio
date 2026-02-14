@@ -21,7 +21,8 @@
     justify-content: center;
 
     width: 100%;
-    height: 100%;
+    height: calc(100vh - var(--header-size));
+    overflow-y: auto;
     position: relative;
     min-height: calc(100dvh - var(--footer-size));
     padding-top: var(--header-size);
@@ -41,10 +42,11 @@
 
 .blog__archive_link_section {
     grid-area: archive;
-    position: relative;
+    position: sticky;
+    top: 0;
     width: 100%;
     max-width: 500px;
-    height: 100%;
+    height: max-content;
 }
 
 .blog__wrap_container {
