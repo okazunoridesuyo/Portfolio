@@ -35,10 +35,10 @@ function my_enqueue_script()
     if (is_front_page()) {
         wp_enqueue_style('portfolio-top', get_template_directory_uri() . '/css/page/top.css', [], filemtime(get_theme_file_path('/css/page/top.css')));
     }
-    if (is_archive('web')) {
+    if (is_post_type_archive('web')) {
         wp_enqueue_style('portfolio-web', get_template_directory_uri() . '/css/page/web.css', [], filemtime(get_theme_file_path('/css/page/web.css')));
     }
-    if (is_archive('illust') || is_tax('genre')) {
+    if (is_post_type_archive('illust') || is_tax('genre')) {
         wp_enqueue_style('portfolio-illust', get_template_directory_uri() . '/css/page/illust.css', [], filemtime(get_theme_file_path('/css/page/illust.css')));
     }
     if (is_page('profile')) {
@@ -47,10 +47,21 @@ function my_enqueue_script()
     if (is_page('blog') || is_date() || is_category() || is_singular('post')) {
         wp_enqueue_style('portfolio-blog', get_template_directory_uri() . '/css/page/blog.css', [], filemtime(get_theme_file_path('/css/page/blog.css')));
     }
+    if (is_post_type_archive('game')) {
+        wp_enqueue_style('portfolio-game', get_template_directory_uri() . '/css/page/game.css', [], filemtime(get_theme_file_path('/css/page/game.css')));
+    }
+    if (is_post_type_archive('stream')) {
+        wp_enqueue_style('portfolio-stream', get_template_directory_uri() . '/css/page/stream.css', [], filemtime(get_theme_file_path('/css/page/stream.css')));
+    }
+    if (is_post_type_archive('text') || is_tax('text_tag')) {
+        wp_enqueue_style('portfolio-text', get_template_directory_uri() . '/css/page/text.css', [], filemtime(get_theme_file_path('/css/page/text.css')));
+    }
     if (is_search()) {
         wp_enqueue_style('portfolio-search', get_template_directory_uri() . '/css/page/search.css', [], filemtime(get_theme_file_path('/css/page/search.css')));
     }
-    if (is_single()) {
+    if (is_singular('text')) {
+        wp_enqueue_style('portfolio-single-text', get_template_directory_uri() . '/css/page/single-text.css', [], filemtime(get_theme_file_path('/css/page/single-text.css')));
+    } elseif (is_single()) {
         wp_enqueue_style('portfolio-single', get_template_directory_uri() . '/css/page/single.css', [], filemtime(get_theme_file_path('/css/page/single.css')));
     }
 };
@@ -95,6 +106,66 @@ add_action('init', function () {
             ],
         ],
     );
+
+    register_post_type(
+        'game',
+        [
+            'label' => 'ゲーム',
+            'public' => true,
+            'has_archive' => true,
+            'menu_position' => 7,
+            'show_in_rest' => true,
+            'supports' => [
+                'title',
+                'editor',
+                'thumbnail',
+                'author',
+                'excerpt',
+                'custom-fields',
+                'post-formats',
+            ],
+        ],
+    );
+
+    register_post_type(
+        'stream',
+        [
+            'label' => '音楽・動画',
+            'public' => true,
+            'has_archive' => true,
+            'menu_position' => 8,
+            'show_in_rest' => true,
+            'supports' => [
+                'title',
+                'editor',
+                'thumbnail',
+                'author',
+                'excerpt',
+                'custom-fields',
+                'post-formats',
+            ],
+        ],
+    );
+
+    register_post_type(
+        'text',
+        [
+            'label' => '読み物',
+            'public' => true,
+            'has_archive' => true,
+            'menu_position' => 9,
+            'show_in_rest' => true,
+            'supports' => [
+                'title',
+                'editor',
+                'thumbnail',
+                'author',
+                'excerpt',
+                'custom-fields',
+                'post-formats',
+            ],
+        ],
+    );
 });
 
 add_action('init', function () {
@@ -123,6 +194,57 @@ add_action('init', function () {
             'hierarchical' => true,
             'rewrite' => [
                 'slug' => 'illust_category',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
+        'game_genre',
+        'game',
+        [
+            'label' => 'ゲームジャンル',
+            'hierarchical' => true,
+            'rewrite' => [
+                'slug' => 'game_genre',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
+        'media_category',
+        'stream',
+        [
+            'label' => 'メディアカテゴリ',
+            'hierarchical' => true,
+            'rewrite' => [
+                'slug' => 'media_category',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
+        'text_tag',
+        'text',
+        [
+            'label' => 'タグ',
+            'hierarchical' => false,
+            'rewrite' => [
+                'slug' => 'text_tag',
                 'with_front' => false,
             ],
             'show_ui' => true,

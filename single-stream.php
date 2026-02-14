@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<main id="game" class="single">
+<main id="stream" class="single">
     <?php if (have_posts()): ?>
         <?php while (have_posts()): the_post(); ?>
 
