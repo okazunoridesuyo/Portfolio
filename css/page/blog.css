@@ -73,6 +73,10 @@
     padding: var(--large-space);
 }
 
+.blog__item_container:not(:has(~ .blog__item_container)) {
+    margin-bottom: var(--large-space);
+}
+
 .blog__item_container--thumbnail {
     width: 100%;
     aspect-ratio: 4/3;

@@ -148,7 +148,7 @@
     grid-template-columns: clamp(300px, 70vw, 1000px) auto;
 }
 
-.based_on {
+.illust_based_on {
     text-align: center;
     font-size: 1.4rem;
     font-weight: normal;

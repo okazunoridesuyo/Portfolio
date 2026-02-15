@@ -10,8 +10,8 @@
                     <?php the_content(); ?>
                 </div>
 
-                <?php if (in_category('fan_art') && $based_on = get_post_meta(get_the_ID(), 'based_on', true)): ?>
-                    <p class="based_on"><span>原作名：</span><?php echo $based_on; ?></p>
+                <?php if (in_category('fan_art') && $illust_based_on = get_post_meta(get_the_ID(), 'illust_based_on', true)): ?>
+                    <p class="illust_based_on"><span>原作名：</span><?php echo $illust_based_on; ?></p>
                 <?php endif; ?>
             <?php endwhile; ?>
         <?php endif; ?>
