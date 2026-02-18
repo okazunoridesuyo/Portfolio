@@ -8,6 +8,8 @@
 
         background-color: var(--main-color);
         color: var(--white-color);
+
+        padding: var(--large-space);
     }
 
     .index {
@@ -17,15 +19,22 @@
 }
 
 .stream__img_area {
-    width: clamp(300px, 80%, 800px);
+    width: clamp(300px, 85%, 800px);
     height: auto;
     aspect-ratio: 1/1;
 
+    position: relative;
+
     margin-inline: auto;
+
+    a {
+        position: absolute;
+        inset: 0;
+    }
 }
 
 .stream__play_area {
-    width: clamp(300px, 80%, 800px);
+    width: clamp(300px, 85%, 800px);
     height: auto;
 
     margin-inline: auto;
@@ -55,6 +64,7 @@
 .stream__music,
 .stream__arrangement,
 .stream__edit,
+.stream__genre,
 .stream__detail,
 .stream__lyrics_text,
 .the_content {
@@ -63,13 +73,31 @@
 }
 
 .stream__edit,
+.stream__genre,
 .stream__detail {
     margin-bottom: var(--x-large-space);
 }
 
+.stream__genre--item {
+    background-color: var(--accent-color);
+
+    padding-inline: .5rem;
+    margin-right: .5rem;
+}
+
 .stream__detail {
+    margin-top: var(--small-space);
+
     .index {
         margin-bottom: var(--small-space);
+    }
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 40%;
+        height: 1px;
+        border-top: 1px dashed var(--white-color);
     }
 }
 
@@ -81,4 +109,22 @@
     line-height: 3.6rem;
 
     margin-bottom: calc(var(--xx-large-space) * 1.5);
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 40%;
+        height: 1px;
+        border-top: 1px dashed var(--white-color);
+    }
+}
+
+.the_content {
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 40%;
+        height: 1px;
+        border-top: 1px dashed var(--white-color);
+    }
 }

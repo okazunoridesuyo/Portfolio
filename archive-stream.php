@@ -9,11 +9,12 @@
                     'order' => [
                         'thumbnail',
                         'title',
-                        'category',
+                        'category' => ['media_category'],
+                        'category1' => ['media_genre'],
                     ],
                     'section' => 'media',
                     'no-image' => true,
-                ]) ?>
+                ]); ?>
 
             <?php endwhile; ?>
         <?php endif; ?>

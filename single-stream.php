@@ -13,6 +13,7 @@
                 <?php if ($stream_img): ?>
                     <div class="stream__img_area">
                         <img class="" src="<?php echo $stream_img; ?>" alt="">
+                        <a href="<?php echo $stream_img; ?>" target="_blank"></a>
                     </div>
                 <?php endif; ?>
 
@@ -56,6 +57,18 @@
                 <?php if ($stream_edit): ?>
                     <div class="stream__edit">
                         <p><span class="index">編集： </span><?php echo $stream_edit; ?></p>
+                    </div>
+                <?php endif; ?>
+
+                <?php $stream_genre = get_the_terms(get_the_ID(), 'media_genre'); ?>
+                <?php if ($stream_genre): ?>
+                    <div class="stream__genre">
+                        <span class="index">ジャンル： </span>
+                        <?php foreach ($stream_genre as $genre): ?>
+                            <span class="stream__genre--item">
+                                <?php echo $genre->name; ?>
+                            </span>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
 

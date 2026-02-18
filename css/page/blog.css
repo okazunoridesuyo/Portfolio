@@ -49,6 +49,17 @@
     height: max-content;
 }
 
+.blog__card_list_section {
+    .title {
+        font-size: 3rem;
+
+        background-color: var(--basic-color);
+
+        padding-block: var(--small-space);
+        margin-bottom: var(--large-space);
+    }
+}
+
 .blog__wrap_container {
     display: flex;
     justify-content: start;

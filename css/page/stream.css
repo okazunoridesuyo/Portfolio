@@ -12,7 +12,7 @@
 
 .media__item_container {
     display: grid;
-    grid-row: span 3;
+    grid-row: span 4;
     grid-template-rows: subgrid;
 
     position: relative;
@@ -49,6 +49,12 @@
 
     margin-right: .5rem;
     padding-inline: .5rem;
+}
+
+.media__item_container--category:nth-of-type(odd) {
+    .media__item_container--category--item {
+        background-color: var(--accent-color);
+    }
 }
 
 .media__item_container--link {

@@ -3,6 +3,16 @@
 <div class="blog__page_wrap_container">
     <main id="blog" class="blog__main_content_section page">
         <section class="blog__card_list_section">
+            <?php if (is_date()): ?>
+                <h1 class="title">ARCHIVE >
+                    <?php echo get_query_var('year') . '年'; ?>
+                    <?php if (is_month()): ?>
+                        <?php echo ' > ' . get_query_var('monthnum') . '月'; ?>
+                    <?php endif; ?>
+                </h1>
+            <?php elseif (is_category()): ?>
+                <h1 class="title">CATEGORY > <?php echo get_queried_object()->name; ?></h1>
+            <?php endif; ?>
             <div class="blog__wrap_container">
 
                 <?php if (have_posts()): ?>

@@ -241,6 +241,23 @@ add_action('init', function () {
     );
 
     register_taxonomy(
+        'media_genre',
+        'stream',
+        [
+            'label' => 'ジャンル',
+            'hierarchical' => false,
+            'rewrite' => [
+                'slug' => 'media_genre',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
         'text_tag',
         'text',
         [

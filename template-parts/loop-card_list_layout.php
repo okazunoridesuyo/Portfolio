@@ -27,13 +27,13 @@ $format_args = [];
 foreach ($args['order'] as $key => $val) {
     $taxonomy_name = get_post_taxonomies(get_the_ID());
     if (is_int($key)) {
-        $format_args['order'][$val] = $val === 'category' ? [$taxonomy_name[0], ''] : '';
+        $format_args['order'][$val] = preg_match('/category\d{0,2}/', $val) ? [$taxonomy_name[0], ''] : '';
     } else {
         $format_args['order'][$key] = $val;
     }
-    if ($key === 'category') {
-        $format_args['order'][$key][0] = $val[0] ?? '';
-        $format_args['order'][$key][1] = $val[1] ?? '';
+    if (preg_match('/category\d{0,2}/', $key, $cat_arr)) {
+        $format_args['order'][$cat_arr[0]][0] = $val[0] ?? '';
+        $format_args['order'][$cat_arr[0]][1] = $val[1] ?? '';
     }
 }
 $replace_args = array_replace($format_args, array_intersect_key($format_args, $args_def));
@@ -47,26 +47,27 @@ $order_list = wp_parse_args($replace_args, $args);
     <?php $counter = 0; ?>
     <?php foreach ($order_list['order'] as $key => $val): ?>
         <?php
-        if ($key === 'category') {
-            $class_name = $val[1] === '' ? $class_name_def . '--' . $key : $val[1];
+        $index = preg_replace('/\d{0,2}$/', '', $key);
+        if (preg_match('/category\d{0,2}/', $key)) {
+            $class_name = $val[1] === '' ? $class_name_def . '--' . $index : $val[1];
         } else {
-            $class_name = $val === '' ? $class_name_def . '--' . $key : $val;
+            $class_name = $val === '' ? $class_name_def . '--' . $index : $val;
         }
         ?>
 
-        <?php if ($key === 'thumbnail'): ?>
+        <?php if (preg_match('/thumbnail\d{0,2}/', $key)): ?>
             <?php get_template_part('template-parts/loop', 'get_thumbnail', [$class_name, $order_list['no-image']]); ?>
         <?php endif; ?>
 
-        <?php if ($key === 'time'): ?>
+        <?php if (preg_match('/time\d{0,2}/', $key)): ?>
             <time class="<?php echo $class_name; ?>" datetime="<?php echo the_time('Y-m-d'); ?>"><?php echo the_time('Y年m月d日'); ?></time>
         <?php endif; ?>
 
-        <?php if ($key === 'title'): ?>
+        <?php if (preg_match('/title\d{0,2}/', $key)): ?>
             <h2 class="<?php echo $class_name; ?>"><?php the_title(); ?></h2>
         <?php endif; ?>
 
-        <?php if ($key === 'category'): ?>
+        <?php if (preg_match('/category\d{0,2}/', $key)): ?>
             <?php $categories = get_the_terms(get_the_ID(), $val[0]); ?>
             <?php if ($categories): ?>
                 <div class="<?php echo $class_name; ?>">
