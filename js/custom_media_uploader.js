@@ -119,19 +119,25 @@ async function get_jsf_counter() {
 }
 
 async function post_jsf_counter() {
-    fetch(jsf_counter.resturl + 'json_delivery/v1/receive-data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': jsf_counter.nonce,
-        },
-        body: JSON.stringify(data),
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((err) => console.error(err));
+    try {
+        const res = await fetch(
+            jsf_counter.resturl + 'json_delivery/v1/receive-data',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': jsf_counter.nonce,
+                },
+                body: JSON.stringify(data),
+            },
+        );
+        const json = await res.json();
+        console.log(json);
+        return true;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
 }
 console.log(data['count']);
 let js_file_url = [];
@@ -147,9 +153,9 @@ let jsf_delete_btn_arr = [];
 
 if (add_js_btn) {
     add_js_btn.addEventListener('click', () => {
-        data['count'] >= 10 ? 10 : data['count']++;
-
         if (data['count'] < 10) {
+            data['count']++;
+
             div[data['count']] = document.createElement('div');
             div[data['count']].className =
                 'additional_js_file__section' + data['count'];
@@ -190,20 +196,30 @@ if (add_js_btn) {
             display_file_name[data['count']].textContent =
                 'ファイル名： ' + text;
 
-            if (post_jsf_counter()) {
-                console.log(data['count']);
+            post_jsf_counter()
+                .then((success) => {
+                    if (success) {
+                        console.log(data['count']);
 
-                div[data['count']].appendChild(label[data['count']]);
-                div[data['count']].appendChild(input[data['count']]);
-                div[data['count']].appendChild(button_select[data['count']]);
-                div[data['count']].appendChild(button_delete[data['count']]);
-                div[data['count']].appendChild(
-                    display_file_name[data['count']],
-                );
-                js_section.appendChild(div[data['count']]);
-            } else {
-                data['count']--;
-            }
+                        div[data['count']].appendChild(label[data['count']]);
+                        div[data['count']].appendChild(input[data['count']]);
+                        div[data['count']].appendChild(
+                            button_select[data['count']],
+                        );
+                        div[data['count']].appendChild(
+                            button_delete[data['count']],
+                        );
+                        div[data['count']].appendChild(
+                            display_file_name[data['count']],
+                        );
+                        js_section.appendChild(div[data['count']]);
+                    } else {
+                        data['count']--;
+                    }
+                })
+                .catch(() => {
+                    console.log('post error.');
+                });
 
             get_jsf_select_element();
             select_js_file();
@@ -214,14 +230,24 @@ if (add_js_btn) {
 
 if (remove_js_btn) {
     remove_js_btn.addEventListener('click', () => {
-        data['count'] <= 0 ? 0 : data['count']--;
-        if (post_jsf_counter()) {
-            if (js_section) js_section.lastElementChild.remove();
-            console.log(js_section.lastElementChild);
+        if (data['count'] > 0) {
+            data['count']--;
 
-            console.log(data['count']);
-        } else {
-            data['count']++;
+            post_jsf_counter()
+                .then((success) => {
+                    if (success) {
+                        console.log(js_section.lastElementChild);
+                        if (js_section.lastElementChild)
+                            js_section.lastElementChild.remove();
+
+                        console.log(data['count']);
+                    } else {
+                        data['count']++;
+                    }
+                })
+                .catch(() => {
+                    console.log('post error.');
+                });
         }
     });
 }
