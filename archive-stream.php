@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<main id="game" class="page">
+<main id="stream" class="page">
     <div class="grid__wrap_container">
         <?php if (have_posts()): ?>
             <?php while (have_posts()): the_post(); ?>

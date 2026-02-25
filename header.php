@@ -21,7 +21,7 @@
                 <li class="nav__menu--list"><a href="<?php echo home_url('web'); ?>">Web</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('illust'); ?>">Illust</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('blog'); ?>">Blog</a></li>
-                <li class="nav__menu--list"><a href="<?php echo home_url('game'); ?>">Game</a></li>
+                <li class="nav__menu--list"><a href="<?php echo home_url('apps'); ?>">Apps</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('stream'); ?>">Stream</a></li>
                 <li class="nav__menu--list"><a href="<?php echo home_url('text'); ?>">Text</a></li>
             </ul>

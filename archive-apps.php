@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<main id="stream" class="page">
+<main id="apps" class="page">
     <div class="grid__wrap_container">
         <?php if (have_posts()): ?>
             <?php while (have_posts()): the_post(); ?>
@@ -11,7 +11,7 @@
                         'title',
                         'category',
                     ],
-                    'section' => 'game',
+                    'section' => 'apps',
                     'no-image' => true,
                 ]) ?>
 

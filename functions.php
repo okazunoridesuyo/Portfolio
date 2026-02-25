@@ -47,8 +47,8 @@ function my_enqueue_script()
     if (is_page('blog') || is_date() || is_category() || is_singular('post')) {
         wp_enqueue_style('portfolio-blog', get_template_directory_uri() . '/css/page/blog.css', [], filemtime(get_theme_file_path('/css/page/blog.css')));
     }
-    if (is_post_type_archive('game')) {
-        wp_enqueue_style('portfolio-game', get_template_directory_uri() . '/css/page/game.css', [], filemtime(get_theme_file_path('/css/page/game.css')));
+    if (is_post_type_archive('apps')) {
+        wp_enqueue_style('portfolio-apps', get_template_directory_uri() . '/css/page/apps.css', [], filemtime(get_theme_file_path('/css/page/apps.css')));
     }
     if (is_post_type_archive('stream')) {
         wp_enqueue_style('portfolio-stream', get_template_directory_uri() . '/css/page/stream.css', [], filemtime(get_theme_file_path('/css/page/stream.css')));
@@ -68,6 +68,48 @@ function my_enqueue_script()
         wp_enqueue_style('portfolio-single', get_template_directory_uri() . '/css/page/single.css', [], filemtime(get_theme_file_path('/css/page/single.css')));
     }
 };
+
+add_action('rest_api_init', function () {
+    register_rest_route('json_delivery/v1', '/receive-data', [
+        'methods' => 'GET',
+        'callback' => 'get_json_data',
+        'permission_callback' => function ($request) {
+            return current_user_can('edit_posts');
+        },
+    ]);
+
+    register_rest_route('json_delivery/v1', '/receive-data', [
+        'methods' => 'POST',
+        'callback' => 'post_json_data',
+        'permission_callback' => function ($request) {
+            return current_user_can('edit_posts');
+        },
+    ]);
+});
+
+function get_json_data($request)
+{
+    $json = $request->get_params();
+
+    return [
+        'status' => 'get ok.',
+        'data' => $json,
+    ];
+}
+
+function post_json_data($request)
+{
+    $json = $request->get_json_params();
+
+    $post_id = $json['post_id'];
+
+    update_post_meta($post_id, 'jsf_counter', wp_json_encode($json));
+
+    return [
+        'status' => 'post ok.',
+        'data' => $json,
+    ];
+}
 
 add_action('init', function () {
     register_post_type(
@@ -111,9 +153,9 @@ add_action('init', function () {
     );
 
     register_post_type(
-        'game',
+        'apps',
         [
-            'label' => 'ゲーム',
+            'label' => 'アプリ（ソフトウェア）',
             'public' => true,
             'has_archive' => true,
             'menu_position' => 7,
@@ -207,13 +249,47 @@ add_action('init', function () {
     );
 
     register_taxonomy(
-        'game_genre',
-        'game',
+        'illust_tag',
+        'illust',
         [
-            'label' => 'ゲームジャンル',
+            'label' => 'イラストタグ',
+            'hierarchical' => false,
+            'rewrite' => [
+                'slug' => 'illust_tag',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
+        'apps_category',
+        'apps',
+        [
+            'label' => 'ソフトウェアカテゴリ',
             'hierarchical' => true,
             'rewrite' => [
-                'slug' => 'game_genre',
+                'slug' => 'apps_category',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
+        'apps_genre',
+        'apps',
+        [
+            'label' => '技術・ジャンル',
+            'hierarchical' => false,
+            'rewrite' => [
+                'slug' => 'apps_genre',
                 'with_front' => false,
             ],
             'show_ui' => true,
@@ -291,6 +367,14 @@ add_action('admin_menu', function () {
         'stream',
         'normal',
     );
+
+    add_meta_box(
+        'apps_files',
+        '追加ファイル',
+        'insert_custom_fields_apps',
+        'apps',
+        'normal',
+    );
 });
 
 function insert_custom_fields_illust($post)
@@ -301,6 +385,57 @@ function insert_custom_fields_illust($post)
     echo '<label for="illust_based_on">原作名：</label>';
     echo '<input type="text" name="illust_based_on" class="illust_based_on" id= "illust_based_on" value="' . $illust_based_on . '" >';
     echo '</div>';
+}
+
+function insert_custom_fields_apps($post)
+{
+    $json_data = get_post_meta($post->ID, 'jsf_counter', true);
+    $json_data = json_decode($json_data, true);
+
+    $count = $json_data['count'] ?? 0;
+
+    wp_localize_script('custom_media_uploader', 'jsf_counter', [
+        'post_id' => $post->ID,
+        'count' => $count,
+        'resturl' => esc_url(rest_url()),
+        'nonce' => wp_create_nonce('wp_rest'),
+    ]);
+
+    echo 'count:' . $count;
+
+    echo '<div id="add_js_file__section" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+
+    echo '<label for="add_js_file">読み込みJavaScriptファイルの追加：</label>';
+    echo '<button type="button" id="add_js_file__btn" style="font-size:16px;">＋</button>';
+    echo '<button type="button" id="remove_js_file__btn" style="font-size:16px;">ー</button>';
+
+    echo '<div class="add_js_file__select_file_section" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+    if ($count) {
+        for ($i = 1; $i <= $count; $i++) {
+            ${'js_file_url' . $i} = get_post_meta($post->ID, 'js_file_url' . $i, true);
+            echo '<div class="additional_js_file__section' . $i . '" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+            echo '<label for="additional_js_file__input' . $i . '" style="margin-right:8px;">追加JavaScriptファイル' . $i . '：</label>';
+            echo '<input type="hidden" name="additional_js_file__input' . $i . '" class="additional_js_file__input' . $i . '" value="' . ${'js_file_url' . $i} . '" />';
+            echo '<button type="button" class="additional_js_file__btn--select' . $i . '" style="margin-right:8px;">選択</button>';
+            echo '<button type="button" class="additional_js_file__btn--delete' . $i . '" style="margin-right:8px;">削除</button>';
+            echo '<p class="additional_js_file__display' . $i . '">ファイル名： ' . basename(${'js_file_url' . $i}) . '</p>';
+            echo '</div>';
+        }
+    }
+    echo '</div>';
+
+    echo '</div>';
+
+    for ($i = 1; $i <= 5; $i++) {
+        ${'add_stylesheet_0' . $i} = get_post_meta($post->ID, 'add_stylesheet_0' . $i, true);
+        echo '<div style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+        echo '<label for="add_stylesheet_0' . $i . '">読み込みCSSファイル' . $i . '：</label>';
+        echo '<input type="hidden" name="add_stylesheet_0' . $i . '" class="add_stylesheet_0' . $i . '_input" value="' . ${'add_stylesheet_0' . $i} . '" />';
+        echo '<button type="button" id="add_stylesheet_0' . $i . '_select" style="margin-right:8px;">選択</button>';
+        echo '<button type="button" id="add_stylesheet_0' . $i . '_delete">削除</button>';
+        echo '<p class="add_stylesheet_0' . $i . '_filename" style="margin-inline:10px;">ファイル名： ' . basename(${'add_stylesheet_0' . $i}) . '</p>';
+        echo '</div>';
+    };
 }
 
 function insert_custom_fields_stream($post)
@@ -366,59 +501,84 @@ add_action('admin_enqueue_scripts', function () {
     wp_enqueue_script('custom_media_uploader', get_template_directory_uri() . '/js/custom_media_uploader.js', ['jquery'], null, true);
 });
 
-add_action('save_post', function ($post) {
+add_action('save_post', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (wp_is_post_revision($post_id)) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
     if (isset($_POST['illust_based_on']) && $_POST['illust_based_on'] !== '') {
-        update_post_meta($post, 'illust_based_on', $_POST['illust_based_on']);
+        update_post_meta($post_id, 'illust_based_on', $_POST['illust_based_on']);
     } else {
-        delete_post_meta($post, 'illust_based_on');
+        delete_post_meta($post_id, 'illust_based_on');
     }
 
     if (isset($_POST['stream_content']) && $_POST['stream_content'] !== '') {
-        update_post_meta($post, 'stream_content', $_POST['stream_content']);
+        update_post_meta($post_id, 'stream_content', $_POST['stream_content']);
     } else {
-        delete_post_meta($post, 'stream_content');
+        delete_post_meta($post_id, 'stream_content');
     }
 
     if (isset($_POST['stream_img']) && $_POST['stream_img'] !== '') {
-        update_post_meta($post, 'stream_img', $_POST['stream_img']);
+        update_post_meta($post_id, 'stream_img', $_POST['stream_img']);
     } else {
-        delete_post_meta($post, 'stream_img');
+        delete_post_meta($post_id, 'stream_img');
     }
 
     if (isset($_POST['stream_lyric']) && $_POST['stream_lyric'] !== '') {
-        update_post_meta($post, 'stream_lyric', $_POST['stream_lyric']);
+        update_post_meta($post_id, 'stream_lyric', $_POST['stream_lyric']);
     } else {
-        delete_post_meta($post, 'stream_lyric');
+        delete_post_meta($post_id, 'stream_lyric');
     }
 
     if (isset($_POST['stream_music']) && $_POST['stream_music'] !== '') {
-        update_post_meta($post, 'stream_music', $_POST['stream_music']);
+        update_post_meta($post_id, 'stream_music', $_POST['stream_music']);
     } else {
-        delete_post_meta($post, 'stream_music');
+        delete_post_meta($post_id, 'stream_music');
     }
 
     if (isset($_POST['stream_arrangement']) && $_POST['stream_arrangement'] !== '') {
-        update_post_meta($post, 'stream_arrangement', $_POST['stream_arrangement']);
+        update_post_meta($post_id, 'stream_arrangement', $_POST['stream_arrangement']);
     } else {
-        delete_post_meta($post, 'stream_arrangement');
+        delete_post_meta($post_id, 'stream_arrangement');
     }
 
     if (isset($_POST['stream_edit']) && $_POST['stream_edit'] !== '') {
-        update_post_meta($post, 'stream_edit', $_POST['stream_edit']);
+        update_post_meta($post_id, 'stream_edit', $_POST['stream_edit']);
     } else {
-        delete_post_meta($post, 'stream_edit');
+        delete_post_meta($post_id, 'stream_edit');
     }
 
     if (isset($_POST['stream_lyrics_text']) && $_POST['stream_lyrics_text'] !== '') {
-        update_post_meta($post, 'stream_lyrics_text', $_POST['stream_lyrics_text']);
+        update_post_meta($post_id, 'stream_lyrics_text', $_POST['stream_lyrics_text']);
     } else {
-        delete_post_meta($post, 'stream_lyrics_text');
+        delete_post_meta($post_id, 'stream_lyrics_text');
     }
 
     if (isset($_POST['stream_detail']) && $_POST['stream_detail'] !== '') {
-        update_post_meta($post, 'stream_detail', $_POST['stream_detail']);
+        update_post_meta($post_id, 'stream_detail', $_POST['stream_detail']);
     } else {
-        delete_post_meta($post, 'stream_detail');
+        delete_post_meta($post_id, 'stream_detail');
+    }
+
+    $json_data = get_post_meta($post_id, 'jsf_counter', true);
+    $json_data = json_decode($json_data, true);
+    $count = $json_data['count'] ?? 0;
+    if ($count) {
+        for ($i = 1; $i <= $count; $i++) {
+            if (isset($_POST['additional_js_file__input' . $i]) && $_POST['additional_js_file__input' . $i] !== '') {
+                update_post_meta($post_id, 'js_file_url' . $i, $_POST['additional_js_file__input' . $i]);
+            } else {
+                delete_post_meta($post_id, 'js_file_url' . $i);
+            }
+        }
     }
 });
 

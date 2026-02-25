@@ -10,7 +10,7 @@
     height: 100%;
 }
 
-.game__item_container {
+.apps__item_container {
     display: grid;
     grid-row: span 3;
     grid-template-rows: subgrid;
@@ -23,11 +23,11 @@
     background-color: var(--white-color);
 }
 
-.game__item_container--thumbnail {
+.apps__item_container--thumbnail {
     aspect-ratio: 1/1;
 }
 
-.game__item_container--title {
+.apps__item_container--title {
     font-size: 2rem;
     font-weight: bold;
     text-align: center;
@@ -36,11 +36,11 @@
     padding-inline: .5rem;
 }
 
-.game__item_container--category {
+.apps__item_container--category {
     padding-inline: .5rem;
 }
 
-.game__item_container--category--item {
+.apps__item_container--category--item {
     display: inline-block;
 
     font-size: 1.4rem;
@@ -51,7 +51,7 @@
     padding-inline: .5rem;
 }
 
-.game__item_container--link {
+.apps__item_container--link {
     position: absolute;
     inset: 0;
 }
