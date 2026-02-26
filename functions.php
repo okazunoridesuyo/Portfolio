@@ -23,6 +23,39 @@ add_action('pre_get_posts', function ($query) {
     }
 });
 
+add_action('admin_enqueue_scripts', function ($hook_suffix) {
+    if ('post.php' !== $hook_suffix && 'post-new.php' !== $hook_suffix) {
+        return;
+    }
+
+    global $post;
+    $screen = get_current_screen();
+
+    wp_enqueue_media();
+
+    if (isset($screen->post_type) && 'stream' === $screen->post_type) {
+        wp_enqueue_script('custom_media_uploader-stream', get_template_directory_uri() . '/js/custom_media_uploader-stream.js', ['jquery'], null, true);
+    }
+
+    if (isset($screen->post_type) && 'apps' === $screen->post_type) {
+        wp_enqueue_script('custom_media_uploader-apps', get_template_directory_uri() . '/js/custom_media_uploader-apps.js', ['jquery'], null, true);
+
+        $json_data = get_post_meta($post->ID, 'jsf_counter', true);
+        $json_data = json_decode($json_data, true);
+
+        $count_js = $json_data['count_js'] ?? 0;
+        $count_css = $json_data['count_css'] ?? 0;
+
+        wp_localize_script('custom_media_uploader-apps', 'jsf_counter', [
+            'post_id' => $post->ID,
+            'count_js' => $count_js,
+            'count_css' => $count_css,
+            'resturl' => esc_url(rest_url()),
+            'nonce' => wp_create_nonce('wp_rest'),
+        ]);
+    }
+});
+
 add_action('wp_enqueue_scripts', 'my_enqueue_script');
 function my_enqueue_script()
 {
@@ -64,6 +97,24 @@ function my_enqueue_script()
         wp_enqueue_script('portfolio-single-text', get_template_directory_uri() . '/js/single-text.js', [], filemtime(get_theme_file_path('/js/single-text.js')), true);
     } elseif (is_singular('stream')) {
         wp_enqueue_style('portfolio-single-stream', get_template_directory_uri() . '/css/page/single-stream.css', [], filemtime(get_theme_file_path('/css/page/single-stream.css')));
+    } elseif (is_singular('apps')) {
+        global $post;
+        $json_data = get_post_meta($post->ID, 'jsf_counter', true);
+        $json_data = json_decode($json_data, true);
+        $count_js = $json_data['count_js'] ?? 0;
+        $count_css = $json_data['count_css'] ?? 0;
+
+        for ($i = 1; $i <= $count_js; $i++) {
+            ${'js_file_url' . $i} = get_post_meta($post->ID, 'js_file_url' . $i, true);
+            if (${'js_file_url' . $i}) {
+                wp_enqueue_script('additional_js_file' . $i, ${'js_file_url' . $i}, [], filemtime(get_theme_file_path(${'js_file_url' . $i})), true);
+            }
+
+            ${'css_file_url' . $i} = get_post_meta($post->ID, 'css_file_url' . $i, true);
+            if (${'css_file_url' . $i}) {
+                wp_enqueue_style('additional_css_file' . $i, ${'css_file_url' . $i}, [], filemtime(get_theme_file_path(${'css_file_url' . $i})));
+            }
+        }
     } elseif (is_single()) {
         wp_enqueue_style('portfolio-single', get_template_directory_uri() . '/css/page/single.css', [], filemtime(get_theme_file_path('/css/page/single.css')));
     }
@@ -392,16 +443,11 @@ function insert_custom_fields_apps($post)
     $json_data = get_post_meta($post->ID, 'jsf_counter', true);
     $json_data = json_decode($json_data, true);
 
-    $count = $json_data['count'] ?? 0;
+    $count_js = $json_data['count_js'] ?? 0;
+    $count_css = $json_data['count_css'] ?? 0;
 
-    wp_localize_script('custom_media_uploader', 'jsf_counter', [
-        'post_id' => $post->ID,
-        'count' => $count,
-        'resturl' => esc_url(rest_url()),
-        'nonce' => wp_create_nonce('wp_rest'),
-    ]);
-
-    echo 'count:' . $count;
+    //JS
+    echo '<h3 style="color:red;">セキュリティ上のリスクがあります。<br>JavaScriptファイルの選択は慎重におこなってください</h3>';
 
     echo '<div id="add_js_file__section" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
 
@@ -409,9 +455,9 @@ function insert_custom_fields_apps($post)
     echo '<button type="button" id="add_js_file__btn" style="font-size:16px;">＋</button>';
     echo '<button type="button" id="remove_js_file__btn" style="font-size:16px;">ー</button>';
 
-    echo '<div class="add_js_file__select_file_section" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
-    if ($count) {
-        for ($i = 1; $i <= $count; $i++) {
+    echo '<div class="add_js_file__select_file_section" style="border:1px solid black; padding:8px; margin-bottom:16px;">';
+    if ($count_js) {
+        for ($i = 1; $i <= $count_js; $i++) {
             ${'js_file_url' . $i} = get_post_meta($post->ID, 'js_file_url' . $i, true);
             echo '<div class="additional_js_file__section' . $i . '" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
             echo '<label for="additional_js_file__input' . $i . '" style="margin-right:8px;">追加JavaScriptファイル' . $i . '：</label>';
@@ -426,16 +472,29 @@ function insert_custom_fields_apps($post)
 
     echo '</div>';
 
-    for ($i = 1; $i <= 5; $i++) {
-        ${'add_stylesheet_0' . $i} = get_post_meta($post->ID, 'add_stylesheet_0' . $i, true);
-        echo '<div style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
-        echo '<label for="add_stylesheet_0' . $i . '">読み込みCSSファイル' . $i . '：</label>';
-        echo '<input type="hidden" name="add_stylesheet_0' . $i . '" class="add_stylesheet_0' . $i . '_input" value="' . ${'add_stylesheet_0' . $i} . '" />';
-        echo '<button type="button" id="add_stylesheet_0' . $i . '_select" style="margin-right:8px;">選択</button>';
-        echo '<button type="button" id="add_stylesheet_0' . $i . '_delete">削除</button>';
-        echo '<p class="add_stylesheet_0' . $i . '_filename" style="margin-inline:10px;">ファイル名： ' . basename(${'add_stylesheet_0' . $i}) . '</p>';
-        echo '</div>';
-    };
+    //CSS
+    echo '<div id="add_css_file__section" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+
+    echo '<label for="add_css_file">読み込みCSSファイルの追加：</label>';
+    echo '<button type="button" id="add_css_file__btn" style="font-size:16px;">＋</button>';
+    echo '<button type="button" id="remove_css_file__btn" style="font-size:16px;">ー</button>';
+
+    echo '<div class="add_css_file__select_file_section" style="border:1px solid black; padding:8px; margin-bottom:16px;">';
+    if ($count_css) {
+        for ($i = 1; $i <= $count_css; $i++) {
+            ${'css_file_url' . $i} = get_post_meta($post->ID, 'css_file_url' . $i, true);
+            echo '<div class="additional_css_file__section" data-index="' . $i . '" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+            echo '<label for="additional_css_file__input" data-index="' . $i . '" style="margin-right:8px;">追加CSSファイル' . $i . '：</label>';
+            echo '<input type="hidden" name="additional_css_file__input' . $i . '" data-index="' . $i . '" class="additional_css_file__input" value="' . ${'css_file_url' . $i} . '" />';
+            echo '<button type="button" class="additional_css_file__btn--select" data-index="' . $i . '" style="margin-right:8px;">選択</button>';
+            echo '<button type="button" class="additional_css_file__btn--delete" data-index="' . $i . '" style="margin-right:8px;">削除</button>';
+            echo '<p class="additional_css_file__display" data-index="' . $i . '">ファイル名： ' . basename(${'css_file_url' . $i}) . '</p>';
+            echo '</div>';
+        }
+    }
+    echo '</div>';
+
+    echo '</div>';
 }
 
 function insert_custom_fields_stream($post)
@@ -495,11 +554,6 @@ function insert_custom_fields_stream($post)
     echo '<textarea type="text" name="stream_detail" class="stream_detail_input" rows="8" cols="50">' . $stream_detail . '</textarea>';
     echo '</div>';
 }
-
-add_action('admin_enqueue_scripts', function () {
-    wp_enqueue_media();
-    wp_enqueue_script('custom_media_uploader', get_template_directory_uri() . '/js/custom_media_uploader.js', ['jquery'], null, true);
-});
 
 add_action('save_post', function ($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -570,13 +624,25 @@ add_action('save_post', function ($post_id) {
 
     $json_data = get_post_meta($post_id, 'jsf_counter', true);
     $json_data = json_decode($json_data, true);
-    $count = $json_data['count'] ?? 0;
-    if ($count) {
-        for ($i = 1; $i <= $count; $i++) {
+    $count_js = $json_data['count_js'] ?? 0;
+    $count_css = $json_data['count_css'] ?? 0;
+
+    if ($count_js) {
+        for ($i = 1; $i <= $count_js; $i++) {
             if (isset($_POST['additional_js_file__input' . $i]) && $_POST['additional_js_file__input' . $i] !== '') {
                 update_post_meta($post_id, 'js_file_url' . $i, $_POST['additional_js_file__input' . $i]);
             } else {
                 delete_post_meta($post_id, 'js_file_url' . $i);
+            }
+        }
+    }
+
+    if ($count_css) {
+        for ($i = 1; $i <= $count_css; $i++) {
+            if (isset($_POST['additional_css_file__input' . $i]) && $_POST['additional_css_file__input' . $i] !== '') {
+                update_post_meta($post_id, 'css_file_url' . $i, $_POST['additional_css_file__input' . $i]);
+            } else {
+                delete_post_meta($post_id, 'css_file_url' . $i);
             }
         }
     }
