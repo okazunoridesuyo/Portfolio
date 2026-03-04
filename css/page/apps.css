@@ -12,7 +12,7 @@
 
 .apps__item_container {
     display: grid;
-    grid-row: span 3;
+    grid-row: span 4;
     grid-template-rows: subgrid;
 
     position: relative;

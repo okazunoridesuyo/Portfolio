@@ -9,6 +9,7 @@ const data = {
     post_id: jsf_counter.post_id,
     count_js: jsf_counter.count_js,
     count_css: jsf_counter.count_css,
+    count_file: jsf_counter.count_file,
 };
 
 async function get_jsf_counter() {
@@ -50,7 +51,7 @@ async function post_jsf_counter() {
         return false;
     }
 }
-console.log(data['count_js']);
+
 let js_file_url = [];
 let div = [];
 let label = [];
@@ -441,5 +442,371 @@ css_section.addEventListener('click', (e) => {
         css_input.setAttribute('value', '');
         css_display_name.textContent = 'ファイル名： ';
         css_file_url[index] = '';
+    }
+});
+
+//FILEセクション
+const archive_file_section = document.querySelector(
+    '#add_archive_file__section',
+);
+const add_archive_file_section = document.querySelector(
+    '.add_archive_file__select_file_section',
+);
+let archive_file_url = [];
+let archive_shortcode_text = [];
+let div_archive_file = [];
+let label_archive_file = [];
+let input_archive_file = [];
+let button_select_archive_file = [];
+let button_delete_archive_file = [];
+let display_file_name_archive_file = [];
+let shortcode_p_archive_file = [];
+let shortcode_label_archive_file = [];
+let shortcode_text_archive_file = [];
+let shortcode_label2_archive_file = [];
+let shortcode_copy_btn_archive_file = [];
+
+archive_file_section.addEventListener('click', (e) => {
+    const add_archive_file_btn = e.target.closest('#add_archive_file__btn');
+
+    if (add_archive_file_btn) {
+        if (data['count_file'] < 10) {
+            data['count_file']++;
+
+            div_archive_file[data['count_file']] =
+                document.createElement('div');
+            div_archive_file[data['count_file']].className =
+                'additional_archive_file__section';
+            div_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            div_archive_file[data['count_file']].style.cssText =
+                'border-bottom:1px solid black; padding:8px; margin-bottom:16px;';
+
+            label_archive_file[data['count_file']] =
+                document.createElement('label');
+            label_archive_file[data['count_file']].htmlFor =
+                'additional_archive_file__input';
+            label_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            label_archive_file[data['count_file']].textContent =
+                '追加アーカイブファイル' + data['count_file'];
+            label_archive_file[data['count_file']].style.marginRight = '8px';
+
+            input_archive_file[data['count_file']] =
+                document.createElement('input');
+            input_archive_file[data['count_file']].type = 'hidden';
+            input_archive_file[data['count_file']].value =
+                archive_file_url[data['count_file']] ?? '';
+            input_archive_file[data['count_file']].className =
+                'additional_archive_file__input';
+            input_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            input_archive_file[data['count_file']].name =
+                'additional_archive_file__input' + data['count_file'];
+
+            button_select_archive_file[data['count_file']] =
+                document.createElement('button');
+            button_select_archive_file[data['count_file']].className =
+                'additional_archive_file__btn--select';
+            button_select_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            button_select_archive_file[data['count_file']].textContent = '選択';
+            button_select_archive_file[data['count_file']].style.marginRight =
+                '8px';
+
+            button_delete_archive_file[data['count_file']] =
+                document.createElement('button');
+            button_delete_archive_file[data['count_file']].className =
+                'additional_archive_file__btn--delete';
+            button_delete_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            button_delete_archive_file[data['count_file']].textContent = '削除';
+            button_delete_archive_file[data['count_file']].style.marginRight =
+                '8px';
+
+            display_file_name_archive_file[data['count_file']] =
+                document.createElement('p');
+            display_file_name_archive_file[data['count_file']].className =
+                'additional_archive_file__display';
+            display_file_name_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            const text = get_display_name(archive_file_url[data['count_file']]);
+            display_file_name_archive_file[data['count_file']].textContent =
+                'ファイル名： ' + text;
+
+            shortcode_p_archive_file[data['count_file']] =
+                document.createElement('p');
+            shortcode_p_archive_file[data['count_file']].className =
+                'additional_archive_file__shortcode--index';
+            shortcode_p_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            shortcode_p_archive_file[data['count_file']].style.marginBottom = 0;
+            shortcode_p_archive_file[data['count_file']].textContent =
+                '記事内埋め込み用ショートコード：';
+
+            shortcode_label_archive_file[data['count_file']] =
+                document.createElement('label');
+            shortcode_label_archive_file[data['count_file']].htmlFor =
+                'additional_archive_file__shortcode--text';
+            shortcode_label_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            shortcode_label_archive_file[data['count_file']].style.marginRight =
+                '8px';
+            shortcode_label_archive_file[data['count_file']].style.marginLeft =
+                '32px';
+            shortcode_label_archive_file[data['count_file']].textContent =
+                '表示テキスト：';
+
+            shortcode_text_archive_file[data['count_file']] =
+                document.createElement('input');
+            shortcode_text_archive_file[data['count_file']].type = 'text';
+            shortcode_text_archive_file[data['count_file']].name =
+                'additional_archive_file__shortcode--text' + data['count_file'];
+            shortcode_text_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            shortcode_text_archive_file[data['count_file']].className =
+                'additional_archive_file__shortcode--text';
+            shortcode_text_archive_file[data['count_file']].value =
+                archive_shortcode_text[data['count_file']] ?? '';
+            shortcode_text_archive_file[data['count_file']].style.marginBottom =
+                '8px';
+
+            shortcode_label2_archive_file[data['count_file']] =
+                document.createElement('label');
+            shortcode_label2_archive_file[data['count_file']].htmlFor =
+                'additional_archive_file__shortcode--btn';
+            shortcode_label2_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            shortcode_label2_archive_file[
+                data['count_file']
+            ].style.marginRight = '8px';
+            shortcode_label2_archive_file[data['count_file']].style.marginLeft =
+                '32px';
+            shortcode_label2_archive_file[data['count_file']].textContent =
+                'コピー  > ';
+
+            shortcode_copy_btn_archive_file[data['count_file']] =
+                document.createElement('button');
+            shortcode_copy_btn_archive_file[data['count_file']].type = 'button';
+            shortcode_copy_btn_archive_file[data['count_file']].className =
+                'additional_archive_file__shortcode--btn';
+            shortcode_copy_btn_archive_file[data['count_file']].dataset.index =
+                data['count_file'];
+            shortcode_copy_btn_archive_file[data['count_file']].textContent =
+                '[file_link key="archive_file_url' +
+                data['count_file'] +
+                '" text="' +
+                (archive_shortcode_text[data['count_file']] ?? text) +
+                '"]';
+            shortcode_copy_btn_archive_file[data['count_file']].disabled = true;
+
+            post_jsf_counter()
+                .then((res) => {
+                    if (res) {
+                        console.log(data['count_file']);
+
+                        div_archive_file[data['count_file']].appendChild(
+                            label_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            input_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            button_select_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            button_delete_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            display_file_name_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            shortcode_p_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            shortcode_label_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            shortcode_text_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            document.createElement('br'),
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            shortcode_label2_archive_file[data['count_file']],
+                        );
+                        div_archive_file[data['count_file']].appendChild(
+                            shortcode_copy_btn_archive_file[data['count_file']],
+                        );
+                        add_archive_file_section.appendChild(
+                            div_archive_file[data['count_file']],
+                        );
+                    } else {
+                        data['count_file']--;
+                    }
+                })
+                .catch(() => {
+                    data['count_file']--;
+                    console.log(
+                        'post error. archive file count: ' + data['count_file'],
+                    );
+                });
+        }
+    }
+
+    const remove_archive_file_btn = e.target.closest(
+        '#remove_archive_file__btn',
+    );
+    if (remove_archive_file_btn) {
+        if (data['count_file'] > 0) {
+            data['count_file']--;
+
+            post_jsf_counter()
+                .then((res) => {
+                    if (res) {
+                        if (add_archive_file_section.lastElementChild)
+                            add_archive_file_section.lastElementChild.remove();
+                        console.log(data['count_file']);
+                    } else {
+                        data['count_file']++;
+                    }
+                })
+                .catch(() => {
+                    data['count_file']++;
+                    console.log(
+                        'post error. archive file count: ' + data['count_file'],
+                    );
+                });
+        }
+    }
+
+    const archive_file_select_btn = e.target.closest(
+        '.additional_archive_file__btn--select',
+    );
+    const archive_file_delete_btn = e.target.closest(
+        '.additional_archive_file__btn--delete',
+    );
+    const archive_file_input = e.target.parentElement.querySelector(
+        '.additional_archive_file__input',
+    );
+    const archive_file_display_name = e.target.parentElement.querySelector(
+        '.additional_archive_file__display',
+    );
+    const archive_file_shortcode_display_text =
+        e.target.parentElement.querySelector(
+            '.additional_archive_file__shortcode--text',
+        );
+    const archive_file_shortcode_text = e.target.parentElement.querySelector(
+        '.additional_archive_file__shortcode--btn',
+    );
+
+    const index = e.target.dataset.index;
+    let mediaUploader;
+
+    if (archive_file_select_btn) {
+        console.log('select:' + index);
+        console.log(
+            'Elements:' +
+                e.target.parentElement.querySelector(
+                    '.additional_archive_file__shortcode--btn',
+                ),
+        );
+
+        e.preventDefault();
+
+        if (mediaUploader) {
+            mediaUploader.open();
+            return;
+        }
+
+        mediaUploader = wp.media({
+            title: 'メディアファイル選択',
+            button: {
+                text: '選択',
+            },
+            library: {
+                // type: 'text/css',
+            },
+            multiple: false,
+        });
+
+        mediaUploader.on('select', () => {
+            const attachment = mediaUploader
+                .state()
+                .get('selection')
+                .first()
+                .toJSON();
+            archive_file_url[index] = attachment.url;
+            archive_file_input.setAttribute('value', archive_file_url[index]);
+
+            const file_name = get_display_name(archive_file_url[index]);
+            archive_file_display_name.textContent = 'ファイル名： ' + file_name;
+
+            archive_shortcode_text[index] =
+                archive_file_shortcode_display_text.value
+                    ? archive_file_shortcode_display_text.value
+                    : file_name;
+            archive_file_shortcode_text.textContent =
+                '[file_link key="archive_file_url' +
+                index +
+                '" text="' +
+                archive_shortcode_text[index] +
+                '"]';
+            archive_file_shortcode_text.disabled = false;
+        });
+
+        mediaUploader.open();
+
+        // console.log(archive_file_url[num]);
+    }
+
+    if (archive_file_delete_btn) {
+        console.log('delete:' + index);
+
+        archive_file_input.setAttribute('value', '');
+        archive_file_display_name.textContent = 'ファイル名： ';
+        archive_file_url[index] = '';
+        archive_file_shortcode_text.disabled = true;
+    }
+
+    const archive_file_shortcode_text_input = e.target.closest(
+        '.additional_archive_file__shortcode--text',
+    );
+
+    if (archive_file_shortcode_text_input) {
+        archive_file_shortcode_text_input.addEventListener('input', () => {
+            archive_shortcode_text[index] =
+                archive_file_shortcode_text_input.value;
+            archive_file_shortcode_text.textContent =
+                '[file_link key="archive_file_url' +
+                index +
+                '" text="' +
+                archive_shortcode_text[index] +
+                '"]';
+            if (!archive_file_shortcode_text_input.value) {
+                archive_file_shortcode_text.disabled = true;
+            } else if (archive_file_url[index]) {
+                archive_file_shortcode_text.disabled = false;
+            }
+        });
+    }
+
+    const archive_file_shortcode_copy_btn = e.target.closest(
+        '.additional_archive_file__shortcode--btn',
+    );
+
+    if (archive_file_shortcode_copy_btn) {
+        if (archive_file_url[index]) {
+            navigator.clipboard
+                .writeText(archive_file_shortcode_copy_btn.textContent)
+                .then(
+                    () => {
+                        console.log('success.');
+                    },
+                    () => {
+                        console.log('error.');
+                    },
+                );
+        }
     }
 });

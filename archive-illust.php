@@ -51,6 +51,13 @@
         <?php endif; ?>
     <?php endforeach; ?>
 
+    <div class="taxonomy_area">
+        <h2 class="section_index">TAGS</h2>
+        <?php get_template_part('template-parts/loop', 'taxonomy_list_link', 'illust_tag'); ?>
+        <h2 class="section_index">GENRE</h2>
+        <?php get_template_part('template-parts/loop', 'taxonomy_list_link', 'illust_genre'); ?>
+
+    </div>
 </main>
 
 <?php get_footer(); ?>

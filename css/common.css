@@ -101,6 +101,21 @@ main.single {
     margin-block: var(--medium-space);
 }
 
+.section_index {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.link_page {
+    text-align: center;
+
+    a {
+        color: var(--black-color)
+    }
+
+    ;
+}
+
 .caution,
 .search__alert {
     font-weight: bold;
@@ -334,4 +349,25 @@ main.single {
 .pagination_container__item_wrap {
     margin-inline: auto;
     width: max-content;
+}
+
+.taxonomy_list__container {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    margin-bottom: var(--large-space);
+}
+
+.taxonomy_list__item {
+    border: 1px solid var(--black-color);
+
+    margin-right: .5rem;
+
+    a {
+        padding-inline: .5rem;
+
+        color: var(--black-color);
+    }
 }

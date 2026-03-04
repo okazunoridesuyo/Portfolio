@@ -45,11 +45,13 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
 
         $count_js = $json_data['count_js'] ?? 0;
         $count_css = $json_data['count_css'] ?? 0;
+        $count_file = $json_data['count_file'] ?? 0;
 
         wp_localize_script('custom_media_uploader-apps', 'jsf_counter', [
             'post_id' => $post->ID,
             'count_js' => $count_js,
             'count_css' => $count_css,
+            'count_file' => $count_file,
             'resturl' => esc_url(rest_url()),
             'nonce' => wp_create_nonce('wp_rest'),
         ]);
@@ -71,7 +73,7 @@ function my_enqueue_script()
     if (is_post_type_archive('web')) {
         wp_enqueue_style('portfolio-web', get_template_directory_uri() . '/css/page/web.css', [], filemtime(get_theme_file_path('/css/page/web.css')));
     }
-    if (is_post_type_archive('illust') || is_tax('genre')) {
+    if (is_post_type_archive('illust') || is_tax('illust_category') || is_tax('illust_tag') || is_tax('illust_genre')) {
         wp_enqueue_style('portfolio-illust', get_template_directory_uri() . '/css/page/illust.css', [], filemtime(get_theme_file_path('/css/page/illust.css')));
     }
     if (is_page('profile')) {
@@ -109,7 +111,8 @@ function my_enqueue_script()
             if (${'js_file_url' . $i}) {
                 wp_enqueue_script('additional_js_file' . $i, ${'js_file_url' . $i}, [], filemtime(get_theme_file_path(${'js_file_url' . $i})), true);
             }
-
+        }
+        for ($i = 1; $i <= $count_css; $i++) {
             ${'css_file_url' . $i} = get_post_meta($post->ID, 'css_file_url' . $i, true);
             if (${'css_file_url' . $i}) {
                 wp_enqueue_style('additional_css_file' . $i, ${'css_file_url' . $i}, [], filemtime(get_theme_file_path(${'css_file_url' . $i})));
@@ -303,10 +306,27 @@ add_action('init', function () {
         'illust_tag',
         'illust',
         [
-            'label' => 'イラストタグ',
+            'label' => 'タグ（作品名など）',
             'hierarchical' => false,
             'rewrite' => [
                 'slug' => 'illust_tag',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
+        'illust_genre',
+        'illust',
+        [
+            'label' => '属性',
+            'hierarchical' => false,
+            'rewrite' => [
+                'slug' => 'illust_genre',
                 'with_front' => false,
             ],
             'show_ui' => true,
@@ -334,10 +354,27 @@ add_action('init', function () {
     );
 
     register_taxonomy(
+        'apps_tech',
+        'apps',
+        [
+            'label' => '技術スタック',
+            'hierarchical' => false,
+            'rewrite' => [
+                'slug' => 'apps_tech',
+                'with_front' => false,
+            ],
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'show_in_quick_edit' => true,
+        ],
+    );
+
+    register_taxonomy(
         'apps_genre',
         'apps',
         [
-            'label' => '技術・ジャンル',
+            'label' => 'ジャンル',
             'hierarchical' => false,
             'rewrite' => [
                 'slug' => 'apps_genre',
@@ -445,6 +482,7 @@ function insert_custom_fields_apps($post)
 
     $count_js = $json_data['count_js'] ?? 0;
     $count_css = $json_data['count_css'] ?? 0;
+    $count_file = $json_data['count_file'] ?? 0;
 
     //JS
     echo '<h3 style="color:red;">セキュリティ上のリスクがあります。<br>JavaScriptファイルの選択は慎重におこなってください</h3>';
@@ -492,6 +530,39 @@ function insert_custom_fields_apps($post)
             echo '</div>';
         }
     }
+    echo '</div>';
+
+    echo '</div>';
+
+    //File
+    echo '<div id="add_archive_file__section" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+
+    echo '<label for="add_archive_file">読み込みアーカイブファイルの追加：</label>';
+    echo '<button type="button" id="add_archive_file__btn" style="font-size:16px;">＋</button>';
+    echo '<button type="button" id="remove_archive_file__btn" style="font-size:16px;">ー</button>';
+
+    echo '<div class="add_archive_file__select_file_section" style="border:1px solid black; padding:8px; margin-bottom:16px;">';
+
+    if ($count_file) {
+        for ($i = 1; $i <= $count_file; $i++) {
+            ${'archive_file_url' . $i} = get_post_meta($post->ID, 'archive_file_url' . $i, true);
+            ${'archive_shortcode_text' . $i} = get_post_meta($post->ID, 'archive_shortcode_text' . $i, true);
+            echo '<div class="additional_archive_file__section" data-index="' . $i . '" style="border-bottom:1px solid black; padding:8px; margin-bottom:16px;">';
+            echo '<label for="additional_archive_file__input" data-index="' . $i . '" style="margin-right:8px;">追加アーカイブファイル' . $i . '：</label>';
+            echo '<input type="hidden" name="additional_archive_file__input' . $i . '" data-index="' . $i . '" class="additional_archive_file__input" value="' . ${'archive_file_url' . $i} . '" />';
+            echo '<button type="button" class="additional_archive_file__btn--select" data-index="' . $i . '" style="margin-right:8px;">選択</button>';
+            echo '<button type="button" class="additional_archive_file__btn--delete" data-index="' . $i . '" style="margin-right:8px;">削除</button>';
+            echo '<p class="additional_archive_file__display" data-index="' . $i . '">ファイル名： ' . basename(${'archive_file_url' . $i}) . '</p>';
+            echo '<p class="additional_archive_file__shortcode--index" data-index="' . $i . '" style="margin-bottom:0;">記事内埋め込み用ショートコード：</p>';
+            echo '<label for="additional_archive_file__shortcode" data-index="' . $i . '" style="margin-left:32px;margin-right:8px;">表示テキスト：</label>';
+            echo '<input type="text" name="additional_archive_file__shortcode--text' . $i . '" class="additional_archive_file__shortcode--text" value="' . ${'archive_shortcode_text' . $i} . '" style="margin-bottom:8px;" data-index="' . $i . '"/>';
+            echo '<br>';
+            echo '<label for="additional_archive_file__shortcode--btn" data-index="' . $i . '" style="margin-left:32px;margin-right:8px;">コピー  > </label>';
+            echo '<button type="button" class="additional_archive_file__shortcode--btn" data-index="' . $i . '" ' . (${'archive_shortcode_text' . $i} ? '' : 'disabled') . '>' . '[file_link key="archive_file_url' . $i . '" text="' . (${'archive_shortcode_text' . $i} ?? basename(${'archive_file_url' . $i})) . '"]' . '</button>';
+            echo '</div>';
+        }
+    }
+
     echo '</div>';
 
     echo '</div>';
@@ -626,6 +697,7 @@ add_action('save_post', function ($post_id) {
     $json_data = json_decode($json_data, true);
     $count_js = $json_data['count_js'] ?? 0;
     $count_css = $json_data['count_css'] ?? 0;
+    $count_file = $json_data['count_file'] ?? 0;
 
     if ($count_js) {
         for ($i = 1; $i <= $count_js; $i++) {
@@ -646,7 +718,38 @@ add_action('save_post', function ($post_id) {
             }
         }
     }
+
+    if ($count_file) {
+        for ($i = 1; $i <= $count_file; $i++) {
+            if (isset($_POST['additional_archive_file__input' . $i]) && $_POST['additional_archive_file__input' . $i] !== '') {
+                update_post_meta($post_id, 'archive_file_url' . $i, $_POST['additional_archive_file__input' . $i]);
+            } else {
+                delete_post_meta($post_id, 'archive_file_url' . $i);
+            }
+
+            if (isset($_POST['additional_archive_file__shortcode--text' . $i]) && $_POST['additional_archive_file__shortcode--text' . $i] !== '') {
+                update_post_meta($post_id, 'archive_shortcode_text' . $i, $_POST['additional_archive_file__shortcode--text' . $i]);
+            } else {
+                delete_post_meta($post_id, 'archive_shortcode_text' . $i);
+            }
+        }
+    }
 });
+
+add_shortcode('file_link', 'apps_custom_field_shortcode');
+
+function apps_custom_field_shortcode($atts)
+{
+    $atts = shortcode_atts([
+        'key' => '',
+        'text' => '',
+    ], $atts);
+
+    global $post;
+    $url = get_post_meta($post->ID, $atts['key'], true);
+
+    return '<a href="' . $url . '">' . $atts['text'] . '</a>';
+}
 
 
 add_action('after_setup_theme', function () {
